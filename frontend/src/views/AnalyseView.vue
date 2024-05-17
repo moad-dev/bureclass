@@ -5,7 +5,7 @@ import PatientComponent from "@/components/PatientComponent.vue";
 <template>
     <label for="inputString">Введите название строительного материала</label>
     <input id="inputString" class="left-margin"/>
-    <button class="big-button">Сопоставить</button>
+    <button @click="search" class="big-button">Сопоставить</button>
     <div>
         <table>
             <tr>
@@ -57,25 +57,10 @@ export default
         }
     },
     methods: {
-        getAnalyzes() {
+        searchBRC() {
             axios.get("/api/analyzes", {headers: {Authorization: "Bearer " + localStorage.getItem('user-token')}})
                 .then((res) => {
                     this.patients = res.data.data;
-            })
-        },
-        deletePatient() {
-            new Promise ((resolve, reject) => {
-            axios.delete('/api/analyzes/' + this.selectedPatient[5], {headers: {Authorization: "Bearer " + localStorage.getItem('user-token')}})
-                .then(resp => {
-                    resolve(resp)
-                })
-                .catch((error) => {
-                    this.msg = error.response.data.error;
-                    reject(error)
-                });
-            }).then(() => {
-                this.$router.push('/analyzes');
-                this.getAnalyzes(); // TODO: WORST PRACTISES => REPLACE LATER
             })
         },
         sort:function(s) {
@@ -83,41 +68,6 @@ export default
         },
         changeSortDir:function() {
             this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
-        },
-        getRow(event) {
-            this.selectedPatient = [
-                event.target.closest("tr").childNodes[0].innerText,
-                event.target.closest("tr").childNodes[1].innerText,
-                event.target.closest("tr").childNodes[2].innerText,
-                event.target.closest("tr").childNodes[3].innerText,
-                'data:image/png;base64, ' + event.target.closest("tr").childNodes[4].innerText,
-                event.target.closest("tr").childNodes[5].innerText,
-                ]
-        },
-        changeFile(event){
-            this.analysisForm.image = event.target.files[0];
-        },
-        createAnalysis(analysis) {
-            new Promise ((resolve, reject) => {
-                axios.post("/api/analyzes/predict", analysis, {headers: {Authorization: "Bearer " + localStorage.getItem('user-token'),}})
-                    .then(resp => {
-                        this.analysisId = resp.data.data._id
-                        store.result = { // redundant if use modal
-                            image_bytes: resp.data.data.image_bytes,
-                            patient_id: resp.data.data.patient_id,
-                            prediction: resp.data.data.prediction,
-                            date: resp.data.data.date
-                        }
-                        resolve(resp)
-                    })
-                    .catch((error) => {
-                        this.msg = error.response.data.error;
-                        reject(error)
-                    });
-            }).then(() => {
-                this.$router.push('/analyzes');
-                this.getAnalyzes(); // TODO: WORST PRACTISES => REPLACE LATER
-            })
         },
         onSubmit(evt) {
             evt.preventDefault();

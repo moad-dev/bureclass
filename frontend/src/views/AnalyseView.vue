@@ -41,13 +41,6 @@ import PatientComponent from "@/components/PatientComponent.vue";
                 <td style="display: none">{{ patient._id }}</td>
             </tr>
         </table>
-        <dialog id="modal" @click="closeModal">
-            <PatientComponent :diagnosis="selectedPatient[1]" :date="selectedPatient[2]"
-                              :title="selectedPatient[3]" :img="selectedPatient[4]"
-                              :id="selectedPatient[5]">
-                <button @click="deletePatient" class="delete-button" style="padding: 0 12px">Удалить</button>
-            </PatientComponent>
-        </dialog>
     </div>
 </template>
 
@@ -69,8 +62,6 @@ export default
                 image: '',
             },
             analysisId: '',
-            modal: '',
-            createModal: '',
             msg: '',
         }
     },
@@ -85,7 +76,6 @@ export default
             new Promise ((resolve, reject) => {
             axios.delete('/api/analyzes/' + this.selectedPatient[5], {headers: {Authorization: "Bearer " + localStorage.getItem('user-token')}})
                 .then(resp => {
-                    modal.close()
                     resolve(resp)
                 })
                 .catch((error) => {
@@ -112,28 +102,11 @@ export default
                 'data:image/png;base64, ' + event.target.closest("tr").childNodes[4].innerText,
                 event.target.closest("tr").childNodes[5].innerText,
                 ]
-            modal.showModal()
-        },
-        openCreateModal() {
-            createModal.showModal()
-        },
-        closeModal(e) {
-            const dialogDimensions = modal.getBoundingClientRect()
-            if (
-                e.clientX < dialogDimensions.left ||
-                e.clientX > dialogDimensions.right ||
-                e.clientY < dialogDimensions.top ||
-                e.clientY > dialogDimensions.bottom
-            ) {
-                modal.close()
-            }
         },
         changeFile(event){
             this.analysisForm.image = event.target.files[0];
         },
         createAnalysis(analysis) {
-            createModal.close()
-
             new Promise ((resolve, reject) => {
                 axios.post("/api/analyzes/predict", analysis, {headers: {Authorization: "Bearer " + localStorage.getItem('user-token'),}})
                     .then(resp => {
@@ -155,10 +128,6 @@ export default
                 this.getAnalyzes(); // TODO: WORST PRACTISES => REPLACE LATER
             })
         },
-        initForm() {
-            this.analysisForm.patient_id = '';
-            this.analysisForm.image = '';
-        },
         onSubmit(evt) {
             evt.preventDefault();
 
@@ -174,9 +143,6 @@ export default
     },
     created() {
         this.getAnalyzes();
-
-        this.modal = document.getElementById("modal")
-        this.createModal = document.getElementById("createModal")
     },
     computed:{
         filteredPatients:function() {

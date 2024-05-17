@@ -1,27 +1,14 @@
-<script setup>
-import PatientComponent from "@/components/PatientComponent.vue";
-</script>
-
 <template>
     <label for="inputString">Введите название строительного материала</label>
     <input id="inputString" class="left-margin"/>
-    <button class="big-button">Сопоставить</button>
+    <button @click="searchBRC" class="big-button">Сопоставить</button>
     <div>
         <table>
             <tr>
                 <th>Код ресурса</th>
-                <th @click="sort('prediction')" class="row">Наименование<button v-if="currentSort === 'prediction'" @click="changeSortDir">{{ currentSortDir === 'asc' ? '▼' : '▲'}}</button></th>
-                <th @click="sort('date')" class="row">Единица измерения<button v-if="currentSort === 'date'" @click="changeSortDir">{{ currentSortDir === 'asc' ? '▼' : '▲'}}</button></th>
-                <th @click="sort('patient_id')" class="row">
-                    Точность сопоставления
-                    <button v-if="currentSort === 'patient_id'" @click="changeSortDir" style="margin: 0 4px">
-                        {{ currentSortDir === 'asc' ? '▼' : '▲'}}
-                    </button>
-                    <select @change="filterPatient($event)" v-on:click.prevent.stop>
-                      <option selected>Все</option>
-                      <option v-for="id in patientsIds"> {{ id }} </option>
-                    </select>
-                </th>
+                <th class="row">Наименование</th>
+                <th class="row">Единица измерения</th>
+                <th class="row">Точность сопоставления</th>
             </tr>
             <tr v-for="(patient, index) in sortedPatients" class="row" @click="getRow">
                 <td>{{ index + 1 }}</td>
@@ -37,133 +24,25 @@ import PatientComponent from "@/components/PatientComponent.vue";
 
 <script>
 import axios from "axios";
-import { store } from '@/store'
 
 export default
 {
     data() {
         return {
             patients: [],
-            currentSort:'date',
-            filteredPatients: [],
-            currentSortDir:'asc',
-            selectedPatient: ['', '', '', '', ''],
-            analysisForm: {
-                patient_id: '',
-                image: '',
-            },
-            analysisId: '',
             msg: '',
         }
     },
     methods: {
-        getAnalyzes() {
+        searchBRC() {
             axios.get("/api/analyzes", {headers: {Authorization: "Bearer " + localStorage.getItem('user-token')}})
                 .then((res) => {
                     this.patients = res.data.data;
             })
         },
-        deletePatient() {
-            new Promise ((resolve, reject) => {
-            axios.delete('/api/analyzes/' + this.selectedPatient[5], {headers: {Authorization: "Bearer " + localStorage.getItem('user-token')}})
-                .then(resp => {
-                    resolve(resp)
-                })
-                .catch((error) => {
-                    this.msg = error.response.data.error;
-                    reject(error)
-                });
-            }).then(() => {
-                this.$router.push('/analyzes');
-                this.getAnalyzes(); // TODO: WORST PRACTISES => REPLACE LATER
-            })
-        },
-        sort:function(s) {
-            this.currentSort = s;
-        },
-        changeSortDir:function() {
-            this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
-        },
-        getRow(event) {
-            this.selectedPatient = [
-                event.target.closest("tr").childNodes[0].innerText,
-                event.target.closest("tr").childNodes[1].innerText,
-                event.target.closest("tr").childNodes[2].innerText,
-                event.target.closest("tr").childNodes[3].innerText,
-                'data:image/png;base64, ' + event.target.closest("tr").childNodes[4].innerText,
-                event.target.closest("tr").childNodes[5].innerText,
-                ]
-        },
-        changeFile(event){
-            this.analysisForm.image = event.target.files[0];
-        },
-        createAnalysis(analysis) {
-            new Promise ((resolve, reject) => {
-                axios.post("/api/analyzes/predict", analysis, {headers: {Authorization: "Bearer " + localStorage.getItem('user-token'),}})
-                    .then(resp => {
-                        this.analysisId = resp.data.data._id
-                        store.result = { // redundant if use modal
-                            image_bytes: resp.data.data.image_bytes,
-                            patient_id: resp.data.data.patient_id,
-                            prediction: resp.data.data.prediction,
-                            date: resp.data.data.date
-                        }
-                        resolve(resp)
-                    })
-                    .catch((error) => {
-                        this.msg = error.response.data.error;
-                        reject(error)
-                    });
-            }).then(() => {
-                this.$router.push('/analyzes');
-                this.getAnalyzes(); // TODO: WORST PRACTISES => REPLACE LATER
-            })
-        },
-        onSubmit(evt) {
-            evt.preventDefault();
-
-            let formData = new FormData()
-            formData.append('patient_id', this.analysisForm.patient_id)
-            formData.append('image', this.analysisForm.image)
-            this.createAnalysis(formData);
-            this.initForm();
-        },
-        filterPatient(event) {
-            this.filteredPatients = this.patients.filter(patient => patient.patient_id === event.target.value);
-        },
-    },
-    created() {
-        this.getAnalyzes();
     },
     computed:{
-        filteredPatients:function() {
-          return this.filteredPatients
-        },
-        sortedPatients:function() {
-            if (this.filteredPatients === undefined || this.filteredPatients.length == 0)
-            {
-                return this.patients.sort((a,b) => {
-                  let modifier = 1;
-                  if(this.currentSortDir === 'desc') modifier = -1;
-                  if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-                  if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-                  return 0;
-                });
-            }
-            else
-            {
-                return this.filteredPatients.sort((a,b) => {
-                  let modifier = 1;
-                  if(this.currentSortDir === 'desc') modifier = -1;
-                  if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-                  if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-                  return 0;
-                });
-            }
-        },
-        patientsIds:function () {
-            return [...new Set(this.patients.map(patient => patient.patient_id).sort())];
-        }
+        
     }
 }
 </script>

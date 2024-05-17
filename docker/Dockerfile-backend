@@ -1,0 +1,10 @@
+FROM python:3.12.0-bookworm
+
+WORKDIR /app
+
+COPY backend ./backend
+
+RUN pip3 install --upgrade pip
+RUN pip3 install -r backend/requirements.txt
+
+CMD uvicorn backend.main:app --host 0.0.0.0 --port 80

@@ -12,4 +12,4 @@ class User(UserBase):
     is_active: bool
 
     class Config:
-        orm_mode = True
+        orm_mode = False

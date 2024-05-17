@@ -1,6 +1,5 @@
 import polars as pl
 import os
-import glob
 import gzip
 import pathlib
 
@@ -25,15 +24,14 @@ ksr = pl.scan_parquet('ksr.parquet').filter(
 ).select('code', 'name', 'okpd2')
 
 ksr.join(okpd2, left_on='okpd2', right_on='code').select(
-    ksr='name',
-    okpd2='name_right'
-).sink_csv('pairs/ksr_okpd2.csv')
+    okpd2='name_right',
+    ksr='name'
+).sink_csv('pairs/okpd2_ksr.csv')
 
 
 for root, dirs, files in os.walk(pairs_dir):
     for file in files:
         if file.endswith(".csv"):
-            # Open the CSV file and gzip it
             csv_file = os.path.join(root, file)
             with open(csv_file, 'rb') as f_in, gzip.open(csv_file + '.gz', 'wb') as f_out:
                 f_out.writelines(f_in)

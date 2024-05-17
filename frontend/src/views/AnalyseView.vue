@@ -3,26 +3,17 @@ import PatientComponent from "@/components/PatientComponent.vue";
 </script>
 
 <template>
-    <button @click="openCreateModal" class="big-button">Создать анализ</button>
-    <dialog id="createModal">
-        <form type="multipart/form-data" class="form-container">
-          <input type="text" name="patient_id" v-model="analysisForm.patient_id" class="input-element border-round cool-padding" placeholder="Идентификатор пациента">
-          <input type="file" name="image" v-on:change="changeFile" class="input-element" alt="image-input">
-          <div class="button-div input-element">
-            <button formmethod="dialog" type="submit" style="background-color: var(--vt-c-text-red-light); color: white" class="cool-padding">Отмена</button>
-            <button @click="onSubmit" class="cool-padding submit-button">Создать анализ</button>
-          </div>
-        </form>
-    </dialog>
-    <div>{{ msg }}</div>
+    <label for="inputString">Введите название строительного материала</label>
+    <input id="inputString" class="left-margin"/>
+    <button @click="search" class="big-button">Сопоставить</button>
     <div>
         <table>
             <tr>
-                <th>№ п/п</th>
-                <th @click="sort('prediction')" class="row">Результат анализа <button v-if="currentSort === 'prediction'" @click="changeSortDir">{{ currentSortDir === 'asc' ? '▼' : '▲'}}</button></th>
-                <th @click="sort('date')" class="row">Дата <button v-if="currentSort === 'date'" @click="changeSortDir">{{ currentSortDir === 'asc' ? '▼' : '▲'}}</button></th>
+                <th>Код ресурса</th>
+                <th @click="sort('prediction')" class="row">Наименование<button v-if="currentSort === 'prediction'" @click="changeSortDir">{{ currentSortDir === 'asc' ? '▼' : '▲'}}</button></th>
+                <th @click="sort('date')" class="row">Единица измерения<button v-if="currentSort === 'date'" @click="changeSortDir">{{ currentSortDir === 'asc' ? '▼' : '▲'}}</button></th>
                 <th @click="sort('patient_id')" class="row">
-                    Идентификатор пациента
+                    Точность сопоставления
                     <button v-if="currentSort === 'patient_id'" @click="changeSortDir" style="margin: 0 4px">
                         {{ currentSortDir === 'asc' ? '▼' : '▲'}}
                     </button>
@@ -41,13 +32,6 @@ import PatientComponent from "@/components/PatientComponent.vue";
                 <td style="display: none">{{ patient._id }}</td>
             </tr>
         </table>
-        <dialog id="modal" @click="closeModal">
-            <PatientComponent :diagnosis="selectedPatient[1]" :date="selectedPatient[2]"
-                              :title="selectedPatient[3]" :img="selectedPatient[4]"
-                              :id="selectedPatient[5]">
-                <button @click="deletePatient" class="delete-button" style="padding: 0 12px">Удалить</button>
-            </PatientComponent>
-        </dialog>
     </div>
 </template>
 
@@ -69,32 +53,14 @@ export default
                 image: '',
             },
             analysisId: '',
-            modal: '',
-            createModal: '',
             msg: '',
         }
     },
     methods: {
-        getAnalyzes() {
+        searchBRC() {
             axios.get("/api/analyzes", {headers: {Authorization: "Bearer " + localStorage.getItem('user-token')}})
                 .then((res) => {
                     this.patients = res.data.data;
-            })
-        },
-        deletePatient() {
-            new Promise ((resolve, reject) => {
-            axios.delete('/api/analyzes/' + this.selectedPatient[5], {headers: {Authorization: "Bearer " + localStorage.getItem('user-token')}})
-                .then(resp => {
-                    modal.close()
-                    resolve(resp)
-                })
-                .catch((error) => {
-                    this.msg = error.response.data.error;
-                    reject(error)
-                });
-            }).then(() => {
-                this.$router.push('/analyzes');
-                this.getAnalyzes(); // TODO: WORST PRACTISES => REPLACE LATER
             })
         },
         sort:function(s) {
@@ -102,62 +68,6 @@ export default
         },
         changeSortDir:function() {
             this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
-        },
-        getRow(event) {
-            this.selectedPatient = [
-                event.target.closest("tr").childNodes[0].innerText,
-                event.target.closest("tr").childNodes[1].innerText,
-                event.target.closest("tr").childNodes[2].innerText,
-                event.target.closest("tr").childNodes[3].innerText,
-                'data:image/png;base64, ' + event.target.closest("tr").childNodes[4].innerText,
-                event.target.closest("tr").childNodes[5].innerText,
-                ]
-            modal.showModal()
-        },
-        openCreateModal() {
-            createModal.showModal()
-        },
-        closeModal(e) {
-            const dialogDimensions = modal.getBoundingClientRect()
-            if (
-                e.clientX < dialogDimensions.left ||
-                e.clientX > dialogDimensions.right ||
-                e.clientY < dialogDimensions.top ||
-                e.clientY > dialogDimensions.bottom
-            ) {
-                modal.close()
-            }
-        },
-        changeFile(event){
-            this.analysisForm.image = event.target.files[0];
-        },
-        createAnalysis(analysis) {
-            createModal.close()
-
-            new Promise ((resolve, reject) => {
-                axios.post("/api/analyzes/predict", analysis, {headers: {Authorization: "Bearer " + localStorage.getItem('user-token'),}})
-                    .then(resp => {
-                        this.analysisId = resp.data.data._id
-                        store.result = { // redundant if use modal
-                            image_bytes: resp.data.data.image_bytes,
-                            patient_id: resp.data.data.patient_id,
-                            prediction: resp.data.data.prediction,
-                            date: resp.data.data.date
-                        }
-                        resolve(resp)
-                    })
-                    .catch((error) => {
-                        this.msg = error.response.data.error;
-                        reject(error)
-                    });
-            }).then(() => {
-                this.$router.push('/analyzes');
-                this.getAnalyzes(); // TODO: WORST PRACTISES => REPLACE LATER
-            })
-        },
-        initForm() {
-            this.analysisForm.patient_id = '';
-            this.analysisForm.image = '';
         },
         onSubmit(evt) {
             evt.preventDefault();
@@ -174,9 +84,6 @@ export default
     },
     created() {
         this.getAnalyzes();
-
-        this.modal = document.getElementById("modal")
-        this.createModal = document.getElementById("createModal")
     },
     computed:{
         filteredPatients:function() {
@@ -223,12 +130,15 @@ export default
         border: 2px solid var(--vt-c-green);
         padding: 20px;
     }
+    .left-margin {
+        margin-left: 20px;
+    }
     .button-div {
         display: flex;
         justify-content: space-between;
     }
     .big-button {
-        margin: 12px 0;
+        margin: 20px;
         background-color: var(--vt-c-green);
         color: white;
         padding: 12px 24px;

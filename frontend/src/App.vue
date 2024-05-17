@@ -8,13 +8,7 @@ import { RouterLink, RouterView } from 'vue-router'
             <img src="./assets/logo_true.svg" width="150"  alt="logo">
             <nav>
                 <RouterLink to="/" class="nav-item">Главная</RouterLink>
-                <RouterLink v-if="!isLoggedIn" to="/register" class="nav-item">Регистрация</RouterLink>
-                <RouterLink v-if="!isLoggedIn" to="/login" class="nav-item">Войти</RouterLink>
                 <RouterLink v-if="isLoggedIn" to="/analyzes" class="nav-item">Анализы</RouterLink>
-                <div v-if="isLoggedIn" class="auth-container">
-                    <p class="nav-item">{{ name }}</p>
-                    <RouterLink to="/" @click="logout" class="nav-item logout">Выйти</RouterLink>
-                </div>
             </nav>
         </div>
     </header>
@@ -25,8 +19,6 @@ import { RouterLink, RouterView } from 'vue-router'
 </template>
 
 <script>
-import { updateState } from "@/router";
-
 export default
 {
     mounted() {

@@ -3,26 +3,17 @@ import PatientComponent from "@/components/PatientComponent.vue";
 </script>
 
 <template>
-    <button @click="openCreateModal" class="big-button">Создать анализ</button>
-    <dialog id="createModal">
-        <form type="multipart/form-data" class="form-container">
-          <input type="text" name="patient_id" v-model="analysisForm.patient_id" class="input-element border-round cool-padding" placeholder="Идентификатор пациента">
-          <input type="file" name="image" v-on:change="changeFile" class="input-element" alt="image-input">
-          <div class="button-div input-element">
-            <button formmethod="dialog" type="submit" style="background-color: var(--vt-c-text-red-light); color: white" class="cool-padding">Отмена</button>
-            <button @click="onSubmit" class="cool-padding submit-button">Создать анализ</button>
-          </div>
-        </form>
-    </dialog>
-    <div>{{ msg }}</div>
+    <label for="inputString">Введите название строительного материала</label>
+    <input id="inputString" class="left-margin"/>
+    <button class="big-button">Сопоставить</button>
     <div>
         <table>
             <tr>
-                <th>№ п/п</th>
-                <th @click="sort('prediction')" class="row">Результат анализа <button v-if="currentSort === 'prediction'" @click="changeSortDir">{{ currentSortDir === 'asc' ? '▼' : '▲'}}</button></th>
-                <th @click="sort('date')" class="row">Дата <button v-if="currentSort === 'date'" @click="changeSortDir">{{ currentSortDir === 'asc' ? '▼' : '▲'}}</button></th>
+                <th>Код ресурса</th>
+                <th @click="sort('prediction')" class="row">Наименование<button v-if="currentSort === 'prediction'" @click="changeSortDir">{{ currentSortDir === 'asc' ? '▼' : '▲'}}</button></th>
+                <th @click="sort('date')" class="row">Единица измерения<button v-if="currentSort === 'date'" @click="changeSortDir">{{ currentSortDir === 'asc' ? '▼' : '▲'}}</button></th>
                 <th @click="sort('patient_id')" class="row">
-                    Идентификатор пациента
+                    Точность сопоставления
                     <button v-if="currentSort === 'patient_id'" @click="changeSortDir" style="margin: 0 4px">
                         {{ currentSortDir === 'asc' ? '▼' : '▲'}}
                     </button>
@@ -189,12 +180,15 @@ export default
         border: 2px solid var(--vt-c-green);
         padding: 20px;
     }
+    .left-margin {
+        margin-left: 20px;
+    }
     .button-div {
         display: flex;
         justify-content: space-between;
     }
     .big-button {
-        margin: 12px 0;
+        margin: 20px;
         background-color: var(--vt-c-green);
         color: white;
         padding: 12px 24px;

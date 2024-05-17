@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 2041.478 453.37601"
+   version="1.1"
+   id="svg838"
+   sodipodi:docname="logo_true.svg"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   width="2041.4783"
+   height="453.37601"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs842" />
+  <sodipodi:namedview
+     id="namedview840"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="0.32"
+     inkscape:cx="831.25"
+     inkscape:cy="315.625"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg838"
+     units="px"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <path
+     d="M 161.101,0 130.876,52.351 100.652,0 H 0 L 130.877,226.688 261.754,0 Z"
+     fill="#41b883"
+     id="path834" />
+  <path
+     d="M 161.101,0 130.876,52.351 100.652,0 H 52.351 L 130.877,136.01 209.403,0 Z"
+     fill="#34495e"
+     id="path836" />
+  <path
+     d="m 161.101,453.376 -30.225,-52.351 -30.224,52.351 H 0 L 130.877,226.688 261.754,453.376 Z"
+     fill="#41b883"
+     id="path834-3" />
+  <path
+     d="m 161.101,453.376 -30.225,-52.351 -30.224,52.351 H 52.351 l 78.526,-136.01 78.526,136.01 z"
+     fill="#34495e"
+     id="path836-5" />
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:379.598px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.97706"
+     x="235.97826"
+     y="374.90814"
+     id="text1655"><tspan
+       sodipodi:role="line"
+       id="tspan1653"
+       x="235.97826"
+       y="374.90814"
+       style="stroke-width:1.97706">rayHealth</tspan></text>
+</svg>

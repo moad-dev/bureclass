@@ -1,27 +1,14 @@
-<script setup>
-import PatientComponent from "@/components/PatientComponent.vue";
-</script>
-
 <template>
     <label for="inputString">Введите название строительного материала</label>
     <input id="inputString" class="left-margin"/>
-    <button @click="search" class="big-button">Сопоставить</button>
+    <button @click="searchBRC" class="big-button">Сопоставить</button>
     <div>
         <table>
             <tr>
                 <th>Код ресурса</th>
-                <th @click="sort('prediction')" class="row">Наименование<button v-if="currentSort === 'prediction'" @click="changeSortDir">{{ currentSortDir === 'asc' ? '▼' : '▲'}}</button></th>
-                <th @click="sort('date')" class="row">Единица измерения<button v-if="currentSort === 'date'" @click="changeSortDir">{{ currentSortDir === 'asc' ? '▼' : '▲'}}</button></th>
-                <th @click="sort('patient_id')" class="row">
-                    Точность сопоставления
-                    <button v-if="currentSort === 'patient_id'" @click="changeSortDir" style="margin: 0 4px">
-                        {{ currentSortDir === 'asc' ? '▼' : '▲'}}
-                    </button>
-                    <select @change="filterPatient($event)" v-on:click.prevent.stop>
-                      <option selected>Все</option>
-                      <option v-for="id in patientsIds"> {{ id }} </option>
-                    </select>
-                </th>
+                <th class="row">Наименование</th>
+                <th class="row">Единица измерения</th>
+                <th class="row">Точность сопоставления</th>
             </tr>
             <tr v-for="(patient, index) in sortedPatients" class="row" @click="getRow">
                 <td>{{ index + 1 }}</td>
@@ -37,22 +24,12 @@ import PatientComponent from "@/components/PatientComponent.vue";
 
 <script>
 import axios from "axios";
-import { store } from '@/store'
 
 export default
 {
     data() {
         return {
             patients: [],
-            currentSort:'date',
-            filteredPatients: [],
-            currentSortDir:'asc',
-            selectedPatient: ['', '', '', '', ''],
-            analysisForm: {
-                patient_id: '',
-                image: '',
-            },
-            analysisId: '',
             msg: '',
         }
     },
@@ -63,57 +40,9 @@ export default
                     this.patients = res.data.data;
             })
         },
-        sort:function(s) {
-            this.currentSort = s;
-        },
-        changeSortDir:function() {
-            this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
-        },
-        onSubmit(evt) {
-            evt.preventDefault();
-
-            let formData = new FormData()
-            formData.append('patient_id', this.analysisForm.patient_id)
-            formData.append('image', this.analysisForm.image)
-            this.createAnalysis(formData);
-            this.initForm();
-        },
-        filterPatient(event) {
-            this.filteredPatients = this.patients.filter(patient => patient.patient_id === event.target.value);
-        },
-    },
-    created() {
-        this.getAnalyzes();
     },
     computed:{
-        filteredPatients:function() {
-          return this.filteredPatients
-        },
-        sortedPatients:function() {
-            if (this.filteredPatients === undefined || this.filteredPatients.length == 0)
-            {
-                return this.patients.sort((a,b) => {
-                  let modifier = 1;
-                  if(this.currentSortDir === 'desc') modifier = -1;
-                  if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-                  if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-                  return 0;
-                });
-            }
-            else
-            {
-                return this.filteredPatients.sort((a,b) => {
-                  let modifier = 1;
-                  if(this.currentSortDir === 'desc') modifier = -1;
-                  if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-                  if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-                  return 0;
-                });
-            }
-        },
-        patientsIds:function () {
-            return [...new Set(this.patients.map(patient => patient.patient_id).sort())];
-        }
+        
     }
 }
 </script>

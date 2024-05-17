@@ -25,6 +25,7 @@ def search(object_name: str):
         "code": "00.00.00.000.00.0.00.00-0000-0000",
         "object_name": "Звуковая отвёртка!",
         "unit_of_measurement": "кг",
+        "score": 1.0,
     })
 
 @app.post("/test/")

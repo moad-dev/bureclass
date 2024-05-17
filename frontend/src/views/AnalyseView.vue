@@ -6,9 +6,9 @@
         <table>
             <tr>
                 <th>Код ресурса</th>
-                <th class="row">Наименование</th>
-                <th class="row">Единица измерения</th>
-                <th class="row">Точность сопоставления</th>
+                <th>Наименование</th>
+                <th>Единица измерения</th>
+                <th>Точность сопоставления</th> 
             </tr>
             <tr v-for="(patient, index) in sortedPatients" class="row" @click="getRow">
                 <td>{{ index + 1 }}</td>

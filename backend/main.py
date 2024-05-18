@@ -17,6 +17,9 @@ app = FastAPI(
 
 @app.post("/actualize")
 def actualize(file: UploadFile):
+    """
+    Актуализация базы наименований строительных ресурсов. Принимает excel (.xlsx) файл классификатора строительных ресурсов, доступный по адресу https://fgiscs.minstroyrf.ru/ksr
+    """
     if file.content_type != "application/vnd.ms-excel" \
         and file.content_type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
         raise HTTPException(400, detail="Invalid document type")
@@ -29,11 +32,13 @@ def actualize(file: UploadFile):
 
 @app.get("/search")
 def search(object_name: str, limit: int):
+    """
+    Определение нескольких строительных ресурсов, наименование которых похоже на заданное.
+    """
     return [
         schemas.Material(**{
             "code": "00.00.00.000.00.0.00.00-0000-0000",
             "object_name": "Звуковая отвёртка!",
-            "unit_of_measurement": "кг",
             "score": 1.0,
         })
     ] * limit

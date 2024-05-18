@@ -33,7 +33,7 @@ docker compose --env-file .env up --build
 * Disk Space
 
 ## Используемые технологии
-* Модель: ElasticSearch, SentenceTransformer
+* Интеллектуальный подбор наименований: ElasticSearch, SentenceTransformer
 * API: FastAPI, Uvicorn, Nginx
 * Frontend: Vue.js
 

@@ -40,6 +40,9 @@ last_job_successful: bool|None = None
 
 @app.get("/actualize")
 def actualize_status():
+    """
+    Полуение состояния выполнения задачи актуализации данных.
+    """
     if actualization_lock.locked():
         status = 'running'
     elif last_job_successful:

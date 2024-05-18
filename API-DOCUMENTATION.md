@@ -11,9 +11,11 @@ Content type: multipart/form-data
 |field|type|description|Required|
 |-----|----|-----------|--------|
 |file |file|.xlsx file, mimetype: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet|true|
-    
-Response 200:
+|password|file|Пароль администратора|true|
 
+Response 202:
+    
+Response 400: \
 Content type: application/json
 ```
 {
@@ -21,12 +23,11 @@ Content type: application/json
 }
 ```
 
-Response 400:
-
+Response 403: \
 Content type: application/json
 ```
 {
-    "detail": "Invalid document content"
+    "detail": "Invalid credentials"
 }
 ```
 
@@ -34,7 +35,7 @@ Content type: application/json
 
 Определение нескольких строительных ресурсов, наименование которых похоже на заданное.
 
-Route: ```/api/actualize```
+Route: ```/api/search```
 
 Method: GET
 
@@ -45,8 +46,7 @@ Parameters:
 |object_name|string|Потенциально неправильное наименование продукта|true|
 |limit      |number|Ограничение на число возвращаемых кандидатов|true|
     
-Response 200:
-
+Response 200: \
 Content type: application/json
 ```
 [
@@ -57,4 +57,20 @@ Content type: application/json
     },
     ...
 ]
+```
+
+---
+
+Полуение состояния выполнения задачи актуализации данных.
+
+Route: ```/api/actualize```
+
+Method: GET
+
+Response 200 \
+Content type: application/json
+```
+{
+    status: ('running'|'completed'|'failed')
+}
 ```

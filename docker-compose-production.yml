@@ -16,8 +16,8 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile-frontend
-    volumes:
-      - asset-frontend-data:/app/dist
+    networks:
+      - bureclass-conn
 
   nginx:
     image: nginx:1.25.5
@@ -25,7 +25,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./docker/nginx/production.conf:/etc/nginx/conf.d/default.conf
-      - asset-frontend-data:/var/www/html
     ports:
       - 80:80
     networks:
@@ -57,7 +56,6 @@ services:
 
 volumes:
   search-data:
-  asset-frontend-data:
 
 networks:
   bureclass-conn:

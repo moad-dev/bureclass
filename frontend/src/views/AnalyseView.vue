@@ -1,25 +1,25 @@
 <template>
     <form v-on:submit.prevent="searchBRC">
         <div>
-            <div>
+            <div style="display: flex;">
                 <label for="inputString">Введите название строительного материала</label>
-                <input id="inputString" class="big-label" v-model="object_name" required />
+                <input id="inputString" class="big-input" v-model="object_name" required />
             </div>
             
-            <div>
-                <label for="inputLimit">Количество самых близких к результату</label>
-                <input id="inputLimit" class="big-label" v-model="limit" type="number" min="1" required />
+            <div style="display: flex;">
+                <label for="inputLimit">Количество возможных вариантов</label>
+                <input id="inputLimit" class="big-input" v-model="limit" type="number" min="1" required />
             </div>
         </div>
         
         <input type="submit" class="big-button" value="Сопоставить"/>
     </form>
-    <div>
+    <div v-if="objects.length != 0">
         <table>
             <tr>
                 <th>Код ресурса</th>
                 <th>Наименование</th>
-                <th>Единица измерения</th>
+                <th>Коэффициент пересчёта ед. изм.</th>
                 <th>Точность сопоставления</th> 
             </tr>
             <tr v-for="object in objects">
@@ -75,6 +75,9 @@ export default
         border: 2px solid var(--vt-c-green);
         padding: 20px;
     }
+    label {
+        align-self: center;
+    }
     .left-margin {
         margin-left: 20px;
     }
@@ -82,11 +85,12 @@ export default
         display: flex;
         justify-content: space-between;
     }
-    .big-label {
+    .big-input {
         margin: 12px 20px;
         padding: 12px;
         border-radius: 4px;
         font-size: 18px;
+        flex-grow: 1;
     }
     .big-button {
         margin: 12px 0px;
@@ -129,6 +133,15 @@ export default
     th:last-child,
     td:last-child {
         border-right-width: 0;
+    }
+    th:nth-child(1),
+    td:nth-child(1) {
+        width: min-content;
+        white-space: nowrap;
+    }
+    th:nth-child(2),
+    td:nth-child(2) {
+        width: 70%;
     }
     tr:last-child td {
         border-bottom-width: 0;

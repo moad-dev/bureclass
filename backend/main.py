@@ -1,8 +1,13 @@
 from asyncio.subprocess import Process
 import os
-import random
 import asyncio
-from fastapi import Depends, FastAPI, HTTPException, JsonResponse, status
+from fastapi import (
+    FastAPI, HTTPException, UploadFile, status
+)
+from fastapi.responses import (
+    JSONResponse
+)
+
 from . import schemas
 
 
@@ -26,7 +31,6 @@ app = FastAPI(
     redoc_url=redoc_url
 )
 
-
 actualization_lock = asyncio.Lock()
 last_job_successful: bool|None = None
 
@@ -43,11 +47,23 @@ def actualize_status():
 
 
 @app.post("/actualize")
-async def actualize():
+async def actualize(file: UploadFile):
+    """
+    Актуализация базы наименований строительных ресурсов. Принимает excel (.xlsx) файл классификатора строительных ресурсов, доступный по адресу https://fgiscs.minstroyrf.ru/ksr
+    """
     def on_job_complete(process: Process, stdout, stderr):
         global last_job_successful
         last_job_successful = process.returncode == 0
-
+    
+    if file.content_type != "application/vnd.ms-excel" \
+        and file.content_type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        raise HTTPException(400, detail="Invalid document type")
+    try: 
+        pass # TODO: read excel file
+    except Exception:
+        raise HTTPException(422, detail="Invalid document content")
+    # TODO: update elasticsearch indexes
+    
     if actualization_lock.locked():
         raise HTTPException(
             status_code=status.HTTP_423_LOCKED, 
@@ -60,18 +76,20 @@ async def actualize():
             on_job_complete
         ))
 
-    return JsonResponse(
+    return JSONResponse(
         status_code=status.HTTP_202_ACCEPTED, 
         content={'message': "Accepted", 'status_url': '/actualize'}
     );
 
 @app.get("/search")
 def search(object_name: str, limit: int):
+    """
+    Определение нескольких строительных ресурсов, наименование которых похоже на заданное.
+    """
     return [
         schemas.Material(**{
             "code": "00.00.00.000.00.0.00.00-0000-0000",
             "object_name": "Звуковая отвёртка!",
-            "unit_of_measurement": "кг",
             "score": 1.0,
         })
     ] * limit

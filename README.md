@@ -18,7 +18,7 @@ docker compose --env-file .env --file docker-compose-local.yml up --build
 docker compose --env-file .env up --build
 ```
 
-Документация конечных точек API представлена в [файле ... TODO]()
+Документация конечных точек API представлена в [файле API-DOCUMENTATION.md](API-DOCUMENTATION.md)
 
 ## Системные требования TODO (посмотреть в докере)
 ### Минимальные

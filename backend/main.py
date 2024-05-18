@@ -9,6 +9,7 @@ from fastapi.responses import (
 )
 
 from . import schemas
+from .variables import KSR_PATH, DATA_DIRECTORY
 
 
 async def run_subprocess(cmd, callback):
@@ -59,11 +60,10 @@ async def actualize(file: UploadFile):
     if file.content_type != "application/vnd.ms-excel" \
         and file.content_type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
         raise HTTPException(400, detail="Invalid document type")
-    try: 
-        pass # TODO: read excel file
-    except Exception:
-        raise HTTPException(422, detail="Invalid document content")
-    # TODO: update elasticsearch indexes
+
+    DATA_DIRECTORY.mkdir(parents=True, exist_ok=True)
+    with open(KSR_PATH, "wb") as local_file:
+        local_file.write(file.file.read())
     
     if actualization_lock.locked():
         raise HTTPException(

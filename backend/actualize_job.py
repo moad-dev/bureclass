@@ -65,6 +65,21 @@ updated_rows = new_snapshot.join(old_snapshot, on='code').filter(
     (pl.col('unit') != pl.col('unit'))
 )
 
+embeddings = pl.scan_parquet('data/embeddings_cache.parquet')
+
+new_rows = embeddings.join(
+    embeddings.select('name', 'embedding'), 
+    how='left',
+    on='name'
+)
+
+updated_rows = updated_rows.join(
+    embeddings.select('name', 'embedding'), 
+    how='left',
+    on='name'
+)
+
+
 new_rows = new_rows.select(
     _index=pl.lit('ksr'),
     _id=pl.col('code'),
@@ -81,8 +96,11 @@ deleted_rows = deleted_rows.select(
     _op_type=pl.lit('delete'),
     _id=pl.col('code')
 )
-
-bulk_actions = pl.collect_all([new_rows, updated_rows, deleted_rows])
+"""
+bulk_actions = pl.collect_all(
+    [new_rows, updated_rows, deleted_rows],
+    streaming=True
+)
 
 
 connections.create_connection(hosts=f"http://search:9200", basic_auth=('elastic', os.getenv('ELASTIC_PASSWORD')))
@@ -94,3 +112,6 @@ bulk(
 
 Path("data").mkdir(exist_ok=True)
 new_snapshot.collect().write_parquet('data/ksr_snapshot.parquet')
+"""
+
+print(new_rows.explain(streaming=True))

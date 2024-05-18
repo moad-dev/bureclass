@@ -8,7 +8,7 @@ import { RouterLink, RouterView } from 'vue-router'
             <img src="./assets/logo_true.png" width="75"  alt="logo">
             <nav>
                 <RouterLink to="/" class="nav-item">Главная</RouterLink>
-                <RouterLink to="/analyzes" class="nav-item">Материалы</RouterLink>
+                <RouterLink to="/materials" class="nav-item">Материалы</RouterLink>
             </nav>
         </div>
     </header>

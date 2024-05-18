@@ -1,6 +1,16 @@
 <template>
-    <label for="inputString">Введите название строительного материала</label>
-    <input id="inputString" class="left-margin" v-model="object_name"/>
+    <div>
+        <div>
+            <label for="inputString">Введите название строительного материала</label>
+            <input id="inputString" class="big-label" v-model="object_name"/>
+        </div>
+        
+        <div>
+            <label for="inputLimit">Количество самых близких к результату</label>
+            <input id="inputLimit" class="big-label" v-model="limit" type="number"/>
+        </div>
+    </div>
+    
     <button @click="searchBRC" class="big-button">Сопоставить</button>
     <div>
         <table>
@@ -10,11 +20,12 @@
                 <th>Единица измерения</th>
                 <th>Точность сопоставления</th> 
             </tr>
-        
-            <td>{{ code }}</td>
-            <td>{{ true_object_name }}</td>
-            <td>{{ unit_of_measurement }}</td>
-            <td>{{ score }}</td>
+            <tr v-for="object in objects">
+                <td>{{ object.code }}</td>
+                <td>{{ object.object_name }}</td>
+                <td>{{ object.unit_of_measurement }}</td>
+                <td>{{ object.score }}</td>
+            </tr>
         </table>
     </div>
 </template>
@@ -26,8 +37,9 @@ export default
 {
     data() {
         return {
+            objects: [],
+            limit: 3,
             object_name: '',
-            true_object_name: '',
             code: '',
             unit_of_measurement: '',
             score: '',
@@ -36,13 +48,10 @@ export default
     },
     methods: {
         searchBRC() {
-            axios.get("/api/search", {params: {object_name: this.object_name}})
+            axios.get("/api/search", {params: {object_name: this.object_name, limit: this.limit}})
                 .then((res) => {
-                    console.log(this.object_name);
-                    this.code = res.data.code;
-                    this.true_object_name = res.data.object_name;
-                    this.unit_of_measurement = res.data.unit_of_measurement;
-                    this.score = res.data.score;
+                    console.log(res.data);
+                    this.objects = res.data;
             })
         },
     },
@@ -71,8 +80,14 @@ export default
         display: flex;
         justify-content: space-between;
     }
+    .big-label {
+        margin: 12px 20px;
+        padding: 12px;
+        border-radius: 4px;
+        font-size: 18px;
+    }
     .big-button {
-        margin: 20px;
+        margin: 12px 0px;
         background-color: var(--vt-c-green);
         color: white;
         padding: 12px 24px;

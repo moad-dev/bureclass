@@ -9,7 +9,7 @@ from fastapi.responses import (
 )
 
 from . import schemas
-from .variables import KSR_PATH
+from .variables import KSR_PATH, DATA_DIRECTORY
 
 
 async def run_subprocess(cmd, callback):
@@ -61,6 +61,7 @@ async def actualize(file: UploadFile):
         and file.content_type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
         raise HTTPException(400, detail="Invalid document type")
 
+    DATA_DIRECTORY.mkdir(parents=True, exist_ok=True)
     with open(KSR_PATH, "wb") as local_file:
         local_file.write(file.file.read())
     

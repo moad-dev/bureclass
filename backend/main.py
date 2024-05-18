@@ -20,13 +20,15 @@ def actualize():
     return {"status": random.random() < 0.5}
 
 @app.get("/search")
-def search(object_name: str):
-    return schemas.Material(**{
-        "code": "00.00.00.000.00.0.00.00-0000-0000",
-        "object_name": "Звуковая отвёртка!",
-        "unit_of_measurement": "кг",
-        "score": 1.0,
-    })
+def search(object_name: str, limit: int):
+    return [
+        schemas.Material(**{
+            "code": "00.00.00.000.00.0.00.00-0000-0000",
+            "object_name": "Звуковая отвёртка!",
+            "unit_of_measurement": "кг",
+            "score": 1.0,
+        })
+    ]
 
 @app.post("/test/")
 def post_test():

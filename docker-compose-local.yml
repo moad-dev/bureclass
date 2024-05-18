@@ -25,6 +25,13 @@ services:
     networks:
       - bureclass-conn
     user: 1000:1000
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /frontend
+          ignore:
+            - node_modules/
 
   nginx:
     image: nginx:1.25.5

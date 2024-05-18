@@ -3,9 +3,12 @@ services:
   backend:
     image: bureclass-backend
     container_name: bureclass-backend
+    restart: unless-stopped
     build:
       context: .
       dockerfile: docker/Dockerfile-backend
+    env_file:
+      - .env
     command: "uvicorn backend.main:app --host 0.0.0.0 --port 80"
     networks:
       - bureclass-conn

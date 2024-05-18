@@ -3,6 +3,7 @@ services:
   backend:
     image: bureclass-backend
     container_name: bureclass-backend
+    restart: unless-stopped
     build:
       context: .
       dockerfile: docker/Dockerfile-backend
@@ -19,6 +20,7 @@ services:
   frontend:
     image: node:22.2.0-alpine3.19
     container_name: bureclass-frontend
+    restart: unless-stopped
     volumes:
       - ./frontend:/frontend
     working_dir: /frontend

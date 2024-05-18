@@ -12,6 +12,8 @@ services:
     command: "uvicorn backend.main:app --host 0.0.0.0 --port 80"
     networks:
       - bureclass-conn
+    volumes:
+      - backend-data:/app/data
 
   frontend:
     image: bureclass-frontend
@@ -59,6 +61,7 @@ services:
 
 volumes:
   search-data:
+  backend-data:
 
 networks:
   bureclass-conn:

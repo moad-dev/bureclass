@@ -103,7 +103,7 @@ bulk_actions = pl.collect_all(
 )
 
 
-connections.create_connection(hosts=f"http://search:9200", basic_auth=('elastic', os.getenv('ELASTIC_PASSWORD')))
+connections.create_connection(hosts=f"http://bureclass-search:9200", basic_auth=('elastic', os.getenv('ELASTIC_PASSWORD')))
 
 bulk(
     connections.get_connection(),

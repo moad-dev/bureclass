@@ -1,15 +1,17 @@
 from asyncio.subprocess import Process
 import os
+import hashlib
 import asyncio
+import pathlib
 from fastapi import (
-    FastAPI, HTTPException, UploadFile, status
+    FastAPI, HTTPException, UploadFile, status, Form
 )
 from fastapi.responses import (
     JSONResponse
 )
+from typing import Annotated
 
 from . import schemas
-from .variables import KSR_PATH, DATA_DIRECTORY
 
 
 async def run_subprocess(cmd, callback):
@@ -48,7 +50,7 @@ def actualize_status():
 
 
 @app.post("/actualize")
-async def actualize(file: UploadFile):
+async def actualize(password: Annotated[str, Form()], file: UploadFile):
     """
     Актуализация базы наименований строительных ресурсов. Принимает excel (.xlsx) файл классификатора строительных ресурсов, доступный по адресу https://fgiscs.minstroyrf.ru/ksr
     """
@@ -61,8 +63,11 @@ async def actualize(file: UploadFile):
         and file.content_type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
         raise HTTPException(400, detail="Invalid document type")
 
-    DATA_DIRECTORY.mkdir(parents=True, exist_ok=True)
-    with open(KSR_PATH, "wb") as local_file:
+    if password != os.getenv("ADMIN_PASSWORD"):
+        raise HTTPException(403, detail="Invalid credentials")
+
+    pathlib.Path("data").mkdir(parents=True, exist_ok=True)
+    with open("data/ksr.xlsx", "wb") as local_file:
         local_file.write(file.file.read())
     
     if actualization_lock.locked():

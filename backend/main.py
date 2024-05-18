@@ -42,7 +42,7 @@ def actualize_status():
     elif last_job_successful:
         status = 'completed'
     else:
-        status = 'falied'
+        status = 'failed'
     return {"status": status}
 
 

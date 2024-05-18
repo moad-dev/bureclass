@@ -1,7 +1,7 @@
 import os
 
 from elasticsearch_dsl import (
-    Document, Keyword, Text,
+    DenseVector, Document, Keyword, Text,
     analyzer, tokenizer, token_filter, connections
 )
 
@@ -42,6 +42,7 @@ class KsrEntry(Document):
     name = Text(
         analyzer=name_analyzer
     )
+    embedding = DenseVector(dims=1024)
 
     class Index:
         name = 'ksr'

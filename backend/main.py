@@ -67,7 +67,7 @@ async def actualize(password: Annotated[str, Form()], file: UploadFile):
         raise HTTPException(400, detail="Invalid document type")
 
     if password != os.getenv("ADMIN_PASSWORD"):
-        raise HTTPException(403, detail="Invalid credentials")
+        raise HTTPException(403, detail=str(os.getenv("ADMIN_PASSWORD")))
 
     pathlib.Path("data").mkdir(parents=True, exist_ok=True)
     with open("data/ksr.xlsx", "wb") as local_file:

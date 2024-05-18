@@ -9,10 +9,14 @@ from fastapi import (
 from fastapi.responses import (
     JSONResponse
 )
+from elasticsearch_dsl import Search, connections
+
 from typing import Annotated
 
 from . import schemas
+from embedding_model import embeddings_model
 
+connections.create_connection(hosts=f"http://search:9200", basic_auth=('elastic', os.getenv('ELASTIC_PASSWORD')))
 
 async def run_subprocess(cmd, callback):
     process = await asyncio.create_subprocess_exec(
@@ -95,10 +99,22 @@ def search(object_name: str, limit: int):
     """
     Определение нескольких строительных ресурсов, наименование которых похоже на заданное.
     """
+    vector = embeddings_model(object_name)
+
+    search = (
+        Search(using=connections.get_connection(), index='ksr')
+            .query('match', content=object_name)
+            .knn(field='embedding', k=50, num_candidates=20, query_vector=vector)
+            .rank(rrf=True)    
+    )
+
+    response = search.exec();
     return [
-        schemas.Material(**{
-            "code": "00.00.00.000.00.0.00.00-0000-0000",
-            "object_name": "Звуковая отвёртка!",
-            "score": 1.0,
-        })
-    ] * limit
+        schemas.Material(
+            code=hit['_source']['code'],
+            object_name=hit['_source']['name'],
+            score=hit["_score"]
+        )
+
+        for hit in response['hits']['hits']
+    ]

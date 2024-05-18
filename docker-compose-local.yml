@@ -21,7 +21,7 @@ services:
     volumes:
       - ./frontend:/frontend
     working_dir: /frontend
-    command: "sh -c 'npm install && npm run dev -- --host 0.0.0.0'"
+    command: "npm run dev -- --host 0.0.0.0"
     networks:
       - bureclass-conn
     user: 1000:1000

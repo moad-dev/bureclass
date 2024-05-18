@@ -1,8 +1,12 @@
-FROM node:22.2.0-alpine3.19
-
+FROM node:latest as build-stage
 WORKDIR /app
-
-COPY ./frontend /app
-
+COPY ./frontend/package*.json ./
 RUN npm install
+COPY ./frontend .
 RUN npm run build
+
+FROM nginx:1.25.5 as production-stage
+RUN mkdir /app
+COPY --from=build-stage /app/dist /app
+COPY docker/nginx/frontend.conf /etc/nginx/nginx.conf
+RUN chown -R nginx:nginx /app

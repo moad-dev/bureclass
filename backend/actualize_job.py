@@ -67,6 +67,7 @@ updated_rows = new_snapshot.join(old_snapshot, on='code').filter(
 )
 
 new_rows = new_rows.select(
+    _op_type=pl.lit('create'),
     _index=pl.lit('ksr'),
     _id=pl.col('code'),
     _source=pl.struct(pl.all())

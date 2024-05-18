@@ -4,12 +4,11 @@ from itertools import chain
 from pathlib import Path
 from elasticsearch.helpers import bulk
 from elasticsearch_dsl import connections
-from .variables import KSR_PATH
 
 def actualize_job():
     df = pl.concat(
         _.slice(1, -2)
-        for _ in pl.read_excel(KSR_PATH, engine='calamine', sheet_id=[1, 2]).values()
+        for _ in pl.read_excel('data/ksr.xlsx', engine='calamine', sheet_id=[1, 2]).values()
     )
 
     df.columns = ['code', 'name', 'unit']

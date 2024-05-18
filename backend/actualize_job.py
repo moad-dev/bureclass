@@ -49,7 +49,7 @@ q = q.with_columns(
 )
 
 
-new_snapshot = q.select(pl.exclude('captures'))
+new_snapshot = q.select(pl.exclude('captures')).filter(pl.col('type') == 'ресурс')
 
 if Path("data/ksr_snapshot.parquet").exists():
     old_snapshot = pl.scan_parquet('data/ksr_snapshot.parquet')
@@ -60,7 +60,6 @@ new_rows = new_snapshot.join(old_snapshot, on='code', how='anti')
 deleted_rows = old_snapshot.join(new_snapshot, on='code', how='anti')
 updated_rows = new_snapshot.join(old_snapshot, on='code').filter(
     (pl.col('name') != pl.col('name_right')) |
-    (pl.col('okpd2') != pl.col('okpd2_right')) |
     (pl.col('okpd2') != pl.col('okpd2_right')) |
     (pl.col('unit') != pl.col('unit'))
 )
@@ -98,17 +97,17 @@ deleted_rows = deleted_rows.select(
 )
 
 bulk_actions = pl.collect_all(
-    [new_rows, updated_rows, deleted_rows],
-    streaming=True
+    [new_rows, updated_rows, deleted_rows]
 )
 
-
+print(bulk_actions)
 connections.create_connection(hosts=f"http://bureclass-search:9200", basic_auth=('elastic', os.getenv('ELASTIC_PASSWORD')))
 
 bulk(
     connections.get_connection(),
-    chain.from_iterable(map(lambda df: df.to_dicts(), bulk_actions))
+    chain.from_iterable(map(lambda x: x.to_dicts(), bulk_actions))
 )
+
 
 Path("data").mkdir(exist_ok=True)
 new_snapshot.collect().write_parquet('data/ksr_snapshot.parquet')

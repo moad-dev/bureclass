@@ -15,8 +15,8 @@ def prefiltered_search(haystack: list[str], needle: str):
     search = (
         Search(using=connections.get_connection(), index='ksr')
             #.filter("term", type='ресурс')
-            .filter("term", name_raw='Листы хризотилцементные волнистые, профиль 40/150, 8-волновые, толщина 5,2 мм')
-            # .query('match', name=needle)
+            .query("terms", name__raw=haystack)
+            .query('match', name=needle)
     )
     
     response = search.execute()

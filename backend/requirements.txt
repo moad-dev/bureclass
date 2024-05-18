@@ -5,3 +5,4 @@ elasticsearch-dsl
 polars
 fastexcel
 python-multipart
+sentence_transformers

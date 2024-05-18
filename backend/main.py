@@ -94,11 +94,3 @@ def search(object_name: str, limit: int):
             "score": 1.0,
         })
     ] * limit
-
-@app.post("/test/")
-def post_test():
-    return True
-
-@app.get("/test/")
-def get_test():
-    return True

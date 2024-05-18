@@ -1,18 +1,17 @@
 <template>
     <form v-on:submit.prevent="searchBRC">
-        <div>
-            <div style="display: flex;">
+        <div style="display: grid;">
+            <div class="input-container">
                 <label for="inputString">Введите название строительного материала</label>
                 <input id="inputString" class="big-input" v-model="object_name" required />
             </div>
             
-            <div style="display: flex;">
+            <div class="input-container">
                 <label for="inputLimit">Количество возможных вариантов</label>
                 <input id="inputLimit" class="big-input" v-model="limit" type="number" min="1" required />
             </div>
-        </div>
-        
-        <input type="submit" class="big-button" value="Сопоставить"/>
+            <input type="submit" class="big-button" value="Сопоставить"/>
+        </div>        
     </form>
     <div v-if="objects.length != 0">
         <table>
@@ -57,9 +56,6 @@ export default
             })
         },
     },
-    computed:{
-        
-    }
 }
 </script>
 
@@ -85,20 +81,25 @@ export default
         display: flex;
         justify-content: space-between;
     }
+    .input-container {
+        display: flex;
+        margin-top: 20px;
+    }
     .big-input {
-        margin: 12px 20px;
-        padding: 12px;
+        margin-left: 20px;
+        padding: 8px 12px;
         border-radius: 4px;
-        font-size: 18px;
+        font-size: 16px;
         flex-grow: 1;
     }
     .big-button {
-        margin: 12px 0px;
+        margin: 24px 0px;
         background-color: var(--vt-c-green);
         color: white;
-        padding: 12px 24px;
+        padding: 12px 20px;
         border-radius: 4px;
         font-size: 18px;
+        flex-grow: 1;
     }
     .border-round {
         border-radius: 2px;

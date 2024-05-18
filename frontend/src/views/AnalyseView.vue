@@ -13,7 +13,7 @@
             <input type="submit" class="big-button" value="Сопоставить"/>
         </div>        
     </form>
-    <div v-if="objects.length != 0">
+    <div v-if="objects.length != 0" class="table-container">
         <table>
             <tr>
                 <th>Код ресурса</th>
@@ -76,6 +76,13 @@ export default
     }
     .left-margin {
         margin-left: 20px;
+    }
+    @media (width <= 680px) {
+        .table-container {
+            width: 100vw;
+            overflow-x: scroll;
+            padding: 0px 12px;
+        }
     }
     .button-div {
         display: flex;

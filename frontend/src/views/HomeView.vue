@@ -2,9 +2,32 @@
     <div class="banner">
         <h1 class="text">BuReClass</h1>
         <h2 class="text">Найдём любой материал!</h2>
-        <RouterLink to="materials" class="button">Перейти к сопоставлению материала</RouterLink>
+        <div style="display: flex;">
+          <RouterLink to="materials" class="button">Перейти к сопоставлению материала</RouterLink>
+          <button @click="sync" class="button" style="margin-left: 12px;">Синхронизировать КСР</button>
+        </div>
     </div>
 </template>
+
+<script>
+  import axios from "axios";
+
+  export default
+  {
+      methods: {
+          sync() {
+              axios.get("/api/actualize")
+                  .then((res) => {
+                      if (res.data.status) {
+                        alert("Синхронизация прошла успешно!");
+                      } else {
+                        alert("ОШИБКА: Синхронизация не произошла!");
+                      }
+              })
+          },
+      },
+  }
+</script>
 
 <style>
 .banner {

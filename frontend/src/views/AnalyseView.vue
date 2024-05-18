@@ -1,17 +1,19 @@
 <template>
-    <div>
+    <form v-on:submit.prevent="searchBRC">
         <div>
-            <label for="inputString">Введите название строительного материала</label>
-            <input id="inputString" class="big-label" v-model="object_name"/>
+            <div>
+                <label for="inputString">Введите название строительного материала</label>
+                <input id="inputString" class="big-label" v-model="object_name" required />
+            </div>
+            
+            <div>
+                <label for="inputLimit">Количество самых близких к результату</label>
+                <input id="inputLimit" class="big-label" v-model="limit" type="number" min="1" required />
+            </div>
         </div>
         
-        <div>
-            <label for="inputLimit">Количество самых близких к результату</label>
-            <input id="inputLimit" class="big-label" v-model="limit" type="number"/>
-        </div>
-    </div>
-    
-    <button @click="searchBRC" class="big-button">Сопоставить</button>
+        <input type="submit" class="big-button" value="Сопоставить"/>
+    </form>
     <div>
         <table>
             <tr>

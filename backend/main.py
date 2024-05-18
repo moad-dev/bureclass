@@ -1,7 +1,23 @@
+from asyncio.subprocess import Process
 import os
-import random
-from fastapi import Depends, FastAPI, HTTPException, UploadFile
+import asyncio
+from fastapi import (
+    FastAPI, HTTPException, UploadFile, status
+)
+from fastapi.responses import (
+    JSONResponse
+)
+
 from . import schemas
+
+
+async def run_subprocess(cmd, callback):
+    process = await asyncio.create_subprocess_exec(
+        *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+    )
+    stdout, stderr = await process.communicate()
+    await callback(process, stdout, stderr)
+
 
 if os.environ.get("DISABLE_SWAGGER") == "true":
     docs_url = None
@@ -15,11 +31,30 @@ app = FastAPI(
     redoc_url=redoc_url
 )
 
+actualization_lock = asyncio.Lock()
+last_job_successful: bool|None = None
+
+
+@app.get("/actualize")
+def actualize_status():
+    if actualization_lock.locked():
+        status = 'running'
+    elif last_job_successful:
+        status = 'completed'
+    else:
+        status = 'falied'
+    return {"status": status}
+
+
 @app.post("/actualize")
-def actualize(file: UploadFile):
+async def actualize(file: UploadFile):
     """
     Актуализация базы наименований строительных ресурсов. Принимает excel (.xlsx) файл классификатора строительных ресурсов, доступный по адресу https://fgiscs.minstroyrf.ru/ksr
     """
+    def on_job_complete(process: Process, stdout, stderr):
+        global last_job_successful
+        last_job_successful = process.returncode == 0
+    
     if file.content_type != "application/vnd.ms-excel" \
         and file.content_type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
         raise HTTPException(400, detail="Invalid document type")
@@ -28,7 +63,23 @@ def actualize(file: UploadFile):
     except Exception:
         raise HTTPException(422, detail="Invalid document content")
     # TODO: update elasticsearch indexes
-    return {"status": True}
+    
+    if actualization_lock.locked():
+        raise HTTPException(
+            status_code=status.HTTP_423_LOCKED, 
+            detail="A job is already in progress. Please wait until the current job is completed."
+        )
+
+    async with actualization_lock:
+        asyncio.create_task(run_subprocess(
+            ['python', 'backend/actualize_job.py'],
+            on_job_complete
+        ))
+
+    return JSONResponse(
+        status_code=status.HTTP_202_ACCEPTED, 
+        content={'message': "Accepted", 'status_url': '/actualize'}
+    );
 
 @app.get("/search")
 def search(object_name: str, limit: int):

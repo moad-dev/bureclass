@@ -14,7 +14,7 @@ from elasticsearch_dsl import Search, connections
 from typing import Annotated
 
 from . import schemas
-from embedding_model import embeddings_model
+from .embedding_model import embeddings_model
 
 connections.create_connection(hosts=f"http://search:9200", basic_auth=('elastic', os.getenv('ELASTIC_PASSWORD')))
 

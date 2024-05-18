@@ -1,23 +1,20 @@
 <template>
     <label for="inputString">Введите название строительного материала</label>
-    <input id="inputString" class="left-margin"/>
+    <input id="inputString" class="left-margin" v-model="object_name"/>
     <button @click="searchBRC" class="big-button">Сопоставить</button>
     <div>
         <table>
             <tr>
                 <th>Код ресурса</th>
-                <th class="row">Наименование</th>
-                <th class="row">Единица измерения</th>
-                <th class="row">Точность сопоставления</th>
+                <th>Наименование</th>
+                <th>Единица измерения</th>
+                <th>Точность сопоставления</th> 
             </tr>
-            <tr v-for="(patient, index) in sortedPatients" class="row" @click="getRow">
-                <td>{{ index + 1 }}</td>
-                <td>{{ patient.prediction }}</td>
-                <td>{{ patient.date }}</td>
-                <td>{{ patient.patient_id }}</td>
-                <td style="display: none">{{ patient.image_bytes }}</td>
-                <td style="display: none">{{ patient._id }}</td>
-            </tr>
+        
+            <td>{{ code }}</td>
+            <td>{{ true_object_name }}</td>
+            <td>{{ unit_of_measurement }}</td>
+            <td></td>
         </table>
     </div>
 </template>
@@ -29,15 +26,21 @@ export default
 {
     data() {
         return {
-            patients: [],
+            object_name: '',
+            true_object_name: '',
+            code: '',
+            unit_of_measurement: '',
             msg: '',
         }
     },
     methods: {
         searchBRC() {
-            axios.get("/api/analyzes", {headers: {Authorization: "Bearer " + localStorage.getItem('user-token')}})
+            axios.get("/api/search", {params: {object_name: this.object_name}})
                 .then((res) => {
-                    this.patients = res.data.data;
+                    console.log(res.data);
+                    this.code = res.data.code;
+                    this.true_object_name = res.data.object_name;
+                    this.unit_of_measurement = res.data.unit_of_measurement;
             })
         },
     },

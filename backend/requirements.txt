@@ -4,3 +4,4 @@ pydantic
 elasticsearch-dsl
 polars
 fastexcel
+python-multipart

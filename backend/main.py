@@ -1,6 +1,6 @@
 import os
 import random
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, UploadFile
 from . import schemas
 
 if os.environ.get("DISABLE_SWAGGER") == "true":
@@ -15,9 +15,17 @@ app = FastAPI(
     redoc_url=redoc_url
 )
 
-@app.get("/actualize")
-def actualize():
-    return {"status": random.random() < 0.5}
+@app.post("/actualize")
+def actualize(file: UploadFile):
+    if file.content_type != "application/vnd.ms-excel" \
+        and file.content_type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        raise HTTPException(400, detail="Invalid document type")
+    try: 
+        pass # TODO: read excel file
+    except Exception:
+        raise HTTPException(422, detail="Invalid document content")
+    # TODO: update elasticsearch indexes
+    return {"status": True}
 
 @app.get("/search")
 def search(object_name: str, limit: int):

@@ -1,7 +1,18 @@
+from asyncio.subprocess import Process
 import os
 import random
-from fastapi import Depends, FastAPI, HTTPException
+import asyncio
+from fastapi import Depends, FastAPI, HTTPException, JsonResponse, status
 from . import schemas
+
+
+async def run_subprocess(cmd, callback):
+    process = await asyncio.create_subprocess_exec(
+        *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+    )
+    stdout, stderr = await process.communicate()
+    await callback(process, stdout, stderr)
+
 
 if os.environ.get("DISABLE_SWAGGER") == "true":
     docs_url = None
@@ -15,9 +26,44 @@ app = FastAPI(
     redoc_url=redoc_url
 )
 
+
+actualization_lock = asyncio.Lock()
+last_job_successful: bool|None = None
+
+
 @app.get("/actualize")
-def actualize():
-    return {"status": random.random() < 0.5}
+def actualize_status():
+    if actualization_lock.locked():
+        status = 'running'
+    elif last_job_successful:
+        status = 'completed'
+    else:
+        status = 'falied'
+    return {"status": status}
+
+
+@app.post("/actualize")
+async def actualize():
+    def on_job_complete(process: Process, stdout, stderr):
+        global last_job_successful
+        last_job_successful = process.returncode == 0
+
+    if actualization_lock.locked():
+        raise HTTPException(
+            status_code=status.HTTP_423_LOCKED, 
+            detail="A job is already in progress. Please wait until the current job is completed."
+        )
+
+    async with actualization_lock:
+        asyncio.create_task(run_subprocess(
+            ['python', 'backend/actualize_job.py'],
+            on_job_complete
+        ))
+
+    return JsonResponse(
+        status_code=status.HTTP_202_ACCEPTED, 
+        content={'message': "Accepted", 'status_url': '/actualize'}
+    );
 
 @app.get("/search")
 def search(object_name: str, limit: int):

@@ -52,8 +52,9 @@ async def actualize(file: UploadFile):
     """
     Актуализация базы наименований строительных ресурсов. Принимает excel (.xlsx) файл классификатора строительных ресурсов, доступный по адресу https://fgiscs.minstroyrf.ru/ksr
     """
-    def on_job_complete(process: Process, stdout, stderr):
+    def on_job_complete(process: Process, _, stderr):
         global last_job_successful
+        print(stderr.decode())
         last_job_successful = process.returncode == 0
     
     if file.content_type != "application/vnd.ms-excel" \

@@ -54,6 +54,7 @@
                   }
                 });
               }, 1000);
+              modal.close();
               resolve(resp);
             })
             .catch(error => {
@@ -62,6 +63,8 @@
                 alert("Ошибка: Неправильный формат файла.");
               } else if (error.response.status == 423) {
                 alert("Ошибка: файл ещё в обработке.")
+              } else if (error.response.status == 403) {
+                alert("Ошибка: неправильный пароль.")
               } else {
                 alert("Непредвиденная ошибка.");
               }

@@ -4,7 +4,7 @@
         <h2 class="text">Найдём любой материал!</h2>
         <div style="display: flex;">
           <RouterLink to="materials" class="button">Перейти к сопоставлению материала</RouterLink>
-          <button @click="sync" class="button" style="margin-left: 12px;">Синхронизировать КСР</button>
+          <button @click="sync" class="button" style="margin-left: 12px;">Актуализировать КСР</button>
         </div>
     </div>
 </template>

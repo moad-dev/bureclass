@@ -5,6 +5,12 @@ from pathlib import Path
 from elasticsearch.helpers import bulk
 from elasticsearch_dsl import connections
 
+<<<<<<< HEAD
+def actualize_job():
+    df = pl.concat(
+        _.slice(1, -2)
+        for _ in pl.read_excel('data/ksr.xlsx', engine='calamine', sheet_id=[1, 2]).values()
+=======
 df = pl.concat(
     _.slice(1, -2)
     for _ in pl.read_excel("data/ksr.xlsx", engine='calamine', sheet_id=[1, 2]).values()
@@ -20,6 +26,7 @@ q = q.with_columns(
         r'(?<okpd2>\d{2}\.\d{2}\.\d{2}\.\d{3})?\.?'
         r'(?<code>\d{2}(?:\.\d{1,2})*(?:-\d{3,4})?(?:-\d{3})?):? ?'
         r'(?<name>.+)?$'
+>>>>>>> 05eda68d6927cdc2d22d0ba017be79eca033e92c
     )
 )
 

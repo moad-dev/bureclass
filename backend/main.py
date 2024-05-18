@@ -28,7 +28,7 @@ def search(object_name: str, limit: int):
             "unit_of_measurement": "кг",
             "score": 1.0,
         })
-    ]
+    ] * limit
 
 @app.post("/test/")
 def post_test():

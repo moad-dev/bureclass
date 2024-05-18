@@ -5,6 +5,7 @@ from elasticsearch_dsl import (
     analyzer, tokenizer, token_filter, connections
 )
 
+# TODO: get out very secret default elasticsearch username from ENV
 connections.create_connection(hosts=f"http://search:9200", basic_auth=('elastic', os.getenv('ELASTIC_PASSWORD')))
 
 
@@ -17,7 +18,6 @@ code_hierarchy_analyzer = analyzer(
         replacement='-',
     )
 )
-
 
 name_analyzer = analyzer(
     'name_analyzer',

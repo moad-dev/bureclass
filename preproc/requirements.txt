@@ -1,0 +1,3 @@
+polars
+fastexcel
+elasticsearch-dsl

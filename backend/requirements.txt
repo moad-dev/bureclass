@@ -1,3 +1,6 @@
 fastapi
 uvicorn
 pydantic
+elasticsearch-dsl
+polars
+fastexcel

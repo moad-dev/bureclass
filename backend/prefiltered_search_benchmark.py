@@ -5,7 +5,7 @@ connections.create_connection(hosts=f"http://search:9200", basic_auth=('elastic'
 
 def prefiltered_search(haystack: list[str], needle: str):
     search = (
-        Search(using=connections.get_connection(), index='rcs')
+        Search(using=connections.get_connection(), index='ksr')
             .filter("term", type='ресурс')
             .filter("terms", name=haystack)
             .query('match', title=needle)

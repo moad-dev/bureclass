@@ -7,8 +7,12 @@
           <button @click="showModal" class="button" style="margin-left: 12px;">Актуализировать КСР</button>
         </div>
         <dialog id="modal" @click="closeModal">
-          <form v-on:submit.prevent="sync">
+          <form v-on:submit.prevent="sync" class="main-form">
             <input type="file" id="inputFile" v-on:change="changeFile" required/>
+            <div>
+                <label for="inputPassword">Пароль</label>
+                <input type="password" id="inputPassword" v-model="password">
+            </div>
             <button class="button">Актуализировать</button>
           </form>
         </dialog>
@@ -23,28 +27,46 @@
     data() {
       return {
         actualizeForm: {
-          file: ''
+          file: '',
         },
+        password: ''
       }
     },
     methods: {
       sync() {
         let formData = new FormData();
         formData.append('file', this.actualizeForm.file);
+        formData.append('password', this.password);
         new Promise((resolve, reject) => {
-          axios.post("/api/actualize", formData, { headers: { 'Content-Type': 'multipart/form-data' }})
+                  axios.post("/api/actualize", formData, { headers: { 'Content-Type': 'multipart/form-data' }})
             .then(resp => {
-                if (resp.data.status) {
-                  alert("Данные актуализированы!");
-                }
-                resolve(resp);
-              })
+              alert("Файл обрабатывается, пожалуйста, подождите.");
+              setTimeout(function checker () {
+                axios.get("/api/actualize").then(function (response) {
+                  if (response.data.status == "running") {
+                    setTimeout(checker, 1000)
+                  }
+                  if (response.data.status == "completed") {
+                    alert("Данные актуализированы.")
+                  }
+                  if (response.data.status == "failed") {
+                    alert("Ошибка актуализации данных.")
+                  }
+                });
+              }, 1000);
+              modal.close();
+              resolve(resp);
+            })
             .catch(error => {
               console.log(error.response.status);
-              if (error.response.status == 422) {
-                alert("ОШИБКА: Неправильный формат файла!");
+              if (error.response.status == 400) {
+                alert("Ошибка: Неправильный формат файла.");
+              } else if (error.response.status == 423) {
+                alert("Ошибка: файл ещё в обработке.")
+              } else if (error.response.status == 403) {
+                alert("Ошибка: неправильный пароль.")
               } else {
-                alert("ОШИБКА: Не удалось прочитать файл!");
+                alert("Непредвиденная ошибка.");
               }
               reject(error)
             });
@@ -83,7 +105,7 @@
   dialog[open] {
     display: flex;
   }
-  form {
+  .main-form {
     display: grid;
     row-gap: 48px;
     height: min-content;

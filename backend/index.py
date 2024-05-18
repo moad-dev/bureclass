@@ -40,7 +40,8 @@ class KsrEntry(Document):
     full_code = Keyword()
     type = Keyword() 
     name = Text(
-        analyzer=name_analyzer
+        analyzer=name_analyzer,
+        fields={'raw': Keyword()}
     )
     embedding = DenseVector(dims=1024)
 

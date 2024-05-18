@@ -14,7 +14,7 @@
             <td>{{ code }}</td>
             <td>{{ true_object_name }}</td>
             <td>{{ unit_of_measurement }}</td>
-            <td></td>
+            <td>{{ score }}</td>
         </table>
     </div>
 </template>
@@ -30,6 +30,7 @@ export default
             true_object_name: '',
             code: '',
             unit_of_measurement: '',
+            score: '',
             msg: '',
         }
     },
@@ -37,10 +38,11 @@ export default
         searchBRC() {
             axios.get("/api/search", {params: {object_name: this.object_name}})
                 .then((res) => {
-                    console.log(res.data);
+                    console.log(this.object_name);
                     this.code = res.data.code;
                     this.true_object_name = res.data.object_name;
                     this.unit_of_measurement = res.data.unit_of_measurement;
+                    this.score = res.data.score;
             })
         },
     },

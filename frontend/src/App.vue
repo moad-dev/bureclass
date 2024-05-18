@@ -5,10 +5,10 @@ import { RouterLink, RouterView } from 'vue-router'
 <template>
     <header>
         <div class="header-bar">
-            <img src="./assets/logo_true.svg" width="150"  alt="logo">
+            <img src="./assets/logo_true.png" width="75"  alt="logo">
             <nav>
                 <RouterLink to="/" class="nav-item">Главная</RouterLink>
-                <RouterLink v-if="isLoggedIn" to="/analyzes" class="nav-item">Анализы</RouterLink>
+                <RouterLink to="/analyzes" class="nav-item">Материалы</RouterLink>
             </nav>
         </div>
     </header>
@@ -19,41 +19,7 @@ import { RouterLink, RouterView } from 'vue-router'
 </template>
 
 <script>
-export default
-{
-    mounted() {
-        window.addEventListener('token-changed', (event) => {
-            this.token = event.detail.storage;
-            this.name = event.detail.name;
-            updateState()
-        });
-        this.token = localStorage.getItem('user-token')
-        this.name = localStorage.getItem('user-name')
-    },
-    data() {
-        return {
-            token: null,
-            name: null
-        }
-    },
-    computed: {
-        isLoggedIn() {
-            return !!this.token
-        }
-    },
-    methods: {
-        logout() {
-            localStorage.removeItem('user-token')
-            localStorage.removeItem('user-name')
-            window.dispatchEvent(new CustomEvent('token-changed', {
-                detail: {
-                    storage: undefined,
-                    name: undefined
-                }
-            }));
-        }
-    }
-}
+
 </script>
 
 <style scoped>

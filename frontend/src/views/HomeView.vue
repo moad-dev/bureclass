@@ -1,8 +1,8 @@
 <template>
     <div class="banner">
-        <h1 class="text">XrayHealth</h1>
-        <h2 class="text">Сделаем лёгкие здоровыми!</h2>
-        <RouterLink to="analyzes" class="button">Перейти к анализам</RouterLink>
+        <h1 class="text">BuReClass</h1>
+        <h2 class="text">Найдём любой материал!</h2>
+        <RouterLink to="analyzes" class="button">Перейти к сопоставлению материала</RouterLink>
     </div>
 </template>
 

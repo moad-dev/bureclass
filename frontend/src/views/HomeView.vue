@@ -7,7 +7,7 @@
           <button @click="showModal" class="button" style="margin-left: 12px;">Актуализировать КСР</button>
         </div>
         <dialog id="modal" @click="closeModal">
-          <form v-on:submit.prevent="sync">
+          <form v-on:submit.prevent="sync" class="main-form">
             <input type="file" id="inputFile" v-on:change="changeFile" required/>
             <button class="button">Актуализировать</button>
           </form>
@@ -83,7 +83,7 @@
   dialog[open] {
     display: flex;
   }
-  form {
+  .main-form {
     display: grid;
     row-gap: 48px;
     height: min-content;

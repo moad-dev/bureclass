@@ -24,7 +24,7 @@
       return {
         actualizeForm: {
           file: ''
-        }
+        },
       }
     },
     methods: {
@@ -79,6 +79,15 @@
     border-radius: 4px;
     border: 2px solid var(--vt-c-green);
     padding: 20px;
+  }
+  dialog[open] {
+    display: flex;
+  }
+  form {
+    display: grid;
+    row-gap: 48px;
+    height: min-content;
+    align-self: center;
   }
   .banner {
     margin: 250px 0;

@@ -16,6 +16,13 @@ services:
     networks:
       - bureclass-conn
     user: 1000:1000
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
   frontend:
     image: node:22.2.0-alpine3.19

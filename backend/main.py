@@ -100,15 +100,15 @@ def search(object_name: str, limit: int):
     Определение нескольких строительных ресурсов, наименование которых похоже на заданное.
     """
     vector = embeddings_model(object_name)
-
+    print(vector)
     search = (
         Search(using=connections.get_connection(), index='ksr')
-            .query('match', content=object_name)
+            .query('match', name=object_name)
             .knn(field='embedding', k=50, num_candidates=20, query_vector=vector)
-            .rank(rrf=True)    
+            .rank(rrf=True)
     )
 
-    response = search.exec();
+    response = search.execute();
     return [
         schemas.Material(
             code=hit['_source']['code'],

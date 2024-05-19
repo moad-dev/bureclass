@@ -110,7 +110,7 @@ def search(object_name: str, limit: int):
     response = search.execute();
     return [
         schemas.Material(
-            code=hit['_source']['code'],
+            code=hit['_source']['full_code'],
             object_name=hit['_source']['name'],
             score=hit["_score"]
         )

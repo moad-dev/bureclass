@@ -103,7 +103,7 @@ def search(object_name: str, limit: int):
     print(vector.shape)
     search = (
         Search(using=connections.get_connection(), index='ksr')
-            .query('match', name=object_name)
+            #.query('match', name=object_name)
             .knn(field='embedding', k=limit, num_candidates=20, query_vector=vector)
     )
 

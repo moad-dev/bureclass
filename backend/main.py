@@ -9,7 +9,7 @@ from fastapi import (
 from fastapi.responses import (
     JSONResponse
 )
-from elasticsearch_dsl import Search, connections, Q
+from elasticsearch_dsl import Search, connections
 
 from typing import Annotated
 
@@ -103,14 +103,7 @@ def search(object_name: str, limit: int):
     print(vector.shape)
     search = (
         Search(using=connections.get_connection(), index='ksr')
-            .query(Q({"match": {
-                "name": {
-                    "query": object_name,
-                    "boost": 0.8,
-                    "fuzziness": 1,
-                }
-            }}))
-            #.query('match', name=object_name)
+            .query('match', name=object_name)
             .knn(field='embedding', k=limit, num_candidates=200, query_vector=vector)
     )
 

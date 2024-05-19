@@ -106,7 +106,7 @@ def search(object_name: str, limit: int):
             .query(Q({"match": {
                 "name": {
                     "query": object_name,
-                    "boost": 1.1,
+                    "boost": 0.8,
                     "fuzziness": 1,
                 }
             }}))

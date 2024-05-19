@@ -14,7 +14,7 @@ from elasticsearch_dsl import Search, connections
 from typing import Annotated
 
 from . import schemas
-from .embedding_model import embeddings_model
+from .embedding_model import embeddings_model, Q
 
 connections.create_connection(hosts=f"http://search:9200", basic_auth=('elastic', os.getenv('ELASTIC_PASSWORD')))
 
@@ -103,8 +103,15 @@ def search(object_name: str, limit: int):
     print(vector.shape)
     search = (
         Search(using=connections.get_connection(), index='ksr')
-            .query('match', name=object_name)
-            .knn(field='embedding', k=5, num_candidates=50, query_vector=vector)
+            .query(Q({"match": {
+                "name": {
+                    "query": object_name,
+                    "boost": 0.9,
+                    "fuzziness": 2,
+                }
+            }}))
+            #.query('match', name=object_name)
+            .knn(field='embedding', k=5, num_candidates=50, query_vector=vector, boost=0.1)
     )
 
     response = search.execute();

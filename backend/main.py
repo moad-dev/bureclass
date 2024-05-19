@@ -104,7 +104,7 @@ def search(object_name: str, limit: int):
     search = (
         Search(using=connections.get_connection(), index='ksr')
             .query('match', name=object_name)
-            .knn(field='embedding', k=limit, num_candidates=200, query_vector=vector)
+            .knn(field='embedding', k=30, num_candidates=200, query_vector=vector)
     )
 
     response = search.execute();

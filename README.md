@@ -7,30 +7,16 @@
 Технической особенностью является индексация КСР с помощью современного свободно распространяемого поискового движка ElasticSearch. Уникальностью решения является использование модели Sentence BERT [`MOADdev/multilingual-e5-large-amethyst`](https://huggingface.co/MOADdev/multilingual-e5-large-amethyst), дообученной на текстах предметной области строительства, что позволяет актуализировать индексацию КСР без модификации поисковых средств.
 
 ## Сборка и запуск приложения
-
-**dev-окружение**
-```powershell
-docker compose --env-file .env --file docker-compose-local.yml up --build
-```
-
-**prod-окружение**
 ```powershell
 docker compose --env-file .env up --build
 ```
 
 Документация конечных точек API представлена в [файле API-DOCUMENTATION.md](API-DOCUMENTATION.md). Материалы исследований моделей искусственного интеллекта находятся в директории [research](research).
 
-## Системные требования TODO (посмотреть в докере)
-### Минимальные
-* CPU
-* RAM
-* Disk Space
-
-### Рекомендуемые
-* CPU
-* RAM
-* VRAM
-* Disk Space
+## Минимальные системные требовани
+* CPU: 2 ядра, 2 ГГц
+* RAM: 12 ГБ
+* Disk Space: 30 ГБ
 
 ## Используемые технологии
 * Интеллектуальный подбор наименований: ElasticSearch, SentenceTransformer;

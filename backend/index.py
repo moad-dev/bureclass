@@ -27,6 +27,11 @@ name_analyzer = analyzer(
             'ru_stopword_filter',
             type='stop',
             stopwords='_russian_'
+        ),
+        token_filter(
+            'ru_stemmer',
+            type='stemmer',
+            language='russian'
         )
     ],
     tokenizer='standard'

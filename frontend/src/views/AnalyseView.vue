@@ -7,7 +7,7 @@
             </div>
             
             <div class="input-container">
-                <label for="inputLimit">Количество возможных вариантов</label>
+                <label for="inputLimit">Топ-N возможных вариантов</label>
                 <input id="inputLimit" class="big-input" v-model="limit" type="number" min="1" required />
             </div>
             <input type="submit" class="big-button" value="Сопоставить"/>

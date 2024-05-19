@@ -2,7 +2,7 @@ import polars as pl
 import os
 from itertools import chain
 from pathlib import Path
-from elasticsearch.helpers import bulk
+from elasticsearch.helpers import parallel_bulk
 from elasticsearch_dsl import connections
 
 df = pl.concat(
@@ -103,11 +103,13 @@ bulk_actions = pl.collect_all(
 print(bulk_actions)
 connections.create_connection(hosts=f"http://bureclass-search:9200", basic_auth=('elastic', os.getenv('ELASTIC_PASSWORD')))
 
-bulk(
+
+for success, info in parallel_bulk(
     connections.get_connection(),
     chain.from_iterable(map(lambda x: x.to_dicts(), bulk_actions))
-)
-
+):
+    if not success:
+        print('A document failed:', info)
 
 Path("data").mkdir(exist_ok=True)
 new_snapshot.collect().write_parquet('data/ksr_snapshot.parquet')

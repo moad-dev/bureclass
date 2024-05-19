@@ -1,3 +1,7 @@
+<script setup>
+    import PopupComponent from "../components/PopupComponent.vue";
+</script>
+
 <template>
     <div class="banner">
         <h1 class="text">BuReClass</h1>
@@ -11,12 +15,16 @@
             <input type="file" id="inputFile" v-on:change="changeFile" required/>
             <div>
                 <label for="inputPassword">Пароль</label>
-                <input type="password" id="inputPassword" v-model="password">
+                <input type="password" id="inputPassword" v-model="password" required>
             </div>
             <button class="button">Актуализировать</button>
           </form>
         </dialog>
     </div>
+    <Transition>
+        <PopupComponent :success="this.popup.success" :title="this.popup.title" :show="this.popup.show" :text="this.popup.text">
+        </PopupComponent>
+    </Transition>
 </template>
 
 <script>
@@ -29,7 +37,13 @@
         actualizeForm: {
           file: '',
         },
-        password: ''
+        password: '',
+        popup: {
+            title: '',
+            text: '',
+            success: true,
+            show: false,
+        },
       }
     },
     methods: {
@@ -40,33 +54,31 @@
         new Promise((resolve, reject) => {
                   axios.post("/api/actualize", formData, { headers: { 'Content-Type': 'multipart/form-data' }})
             .then(resp => {
-              alert("Файл обрабатывается, пожалуйста, подождите.");
-              setTimeout(function checker () {
+              // this.showPopup("failed", "ВНИМАНИЕ", "Файл обрабатывается, пожалуйста, подождите")
+              setTimeout(function checker (callback) {
                 axios.get("/api/actualize").then(function (response) {
                   if (response.data.status == "running") {
-                    setTimeout(checker, 1000)
+                    setTimeout(checker, 1000, callback);
                   }
                   if (response.data.status == "completed") {
-                    alert("Данные актуализированы.")
+                    callback("completed", "УСПЕХ", "Данные актуализированы");
                   }
                   if (response.data.status == "failed") {
-                    alert("Ошибка актуализации данных.")
+                    callback("failed", "ОШИБКА", "Актуализация данных не была проведена");
                   }
                 });
-              }, 1000);
+              }, 1000, this.showPopup);
               modal.close();
               resolve(resp);
             })
             .catch(error => {
               console.log(error.response.status);
               if (error.response.status == 400) {
-                alert("Ошибка: Неправильный формат файла.");
+                this.showPopup("failed", "ОШИБКА", "Неправильный формат файла");
               } else if (error.response.status == 423) {
-                alert("Ошибка: файл ещё в обработке.")
+                this.showPopup("failed", "ОШИБКА", "Файл ещё в обработке");
               } else if (error.response.status == 403) {
-                alert("Ошибка: неправильный пароль.")
-              } else {
-                alert("Непредвиденная ошибка.");
+                this.showPopup("failed", "ОШИБКА", "Неправильный пароль");
               }
               reject(error)
             });
@@ -88,50 +100,65 @@
         ) {
           modal.close()
         }
-        },
+      },
+      showPopup(status, title, text) {
+        this.popup.title = title;
+        this.popup.text = text;
+        this.popup.success = status == "completed";
+        this.popup.show = true;
+        setTimeout(() => {this.popup.show = false}, 4000);
+      },
     }
   }
 </script>
 
 <style>
-  dialog {
+    dialog {
     top: 50%;
     left: 50%;
     translate: -50% -50%;
     border-radius: 4px;
     border: 2px solid var(--vt-c-green);
     padding: 20px;
-  }
-  dialog[open] {
+    }
+    dialog[open] {
     display: flex;
-  }
-  .main-form {
+    }
+    .main-form {
     display: grid;
     row-gap: 48px;
     height: min-content;
     align-self: center;
-  }
-  .banner {
+    }
+    .banner {
     margin: 250px 0;
     display: grid;
     align-content: center;
     justify-items: center;
-  }
-  h1 {
+    }
+    h1 {
     font-size: 50px;
-  }
-  h2 {
+    }
+    h2 {
     font-size: 30px;
     margin-bottom: 20px;
-  }
-  .button {
+    }
+    .button {
     background-color: var(--vt-c-green);
     color: white;
     padding: 12px 24px;
     border-radius: 4px;
     font-size: 18px;
-  }
-  .button:hover {
+    }
+    .button:hover {
     background-color: #008c49;
-  }
+    }
+    .v-enter-active,
+    .v-leave-active {
+    transition: opacity 0.5s ease;
+    }
+    .v-enter-from,
+    .v-leave-to {
+    opacity: 0;
+    }
 </style>

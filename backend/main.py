@@ -111,7 +111,7 @@ def search(object_name: str, limit: int):
                 }
             }}))
             #.query('match', name=object_name)
-            .knn(field='embedding', k=5, num_candidates=50, query_vector=vector, boost=0.1)
+            .knn(field='embedding', k=50, num_candidates=50, query_vector=vector, boost=1.0)
     )
 
     response = search.execute();

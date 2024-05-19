@@ -59,7 +59,7 @@ services:
       NGINX_SERVER_NAME: ${NGINX_SERVER_NAME}
 
   search:
-    image: elasticsearch:8.7.1
+    image: elasticsearch:8.13.4
     container_name: bureclass-search
     restart: unless-stopped
     environment:

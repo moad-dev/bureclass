@@ -105,7 +105,7 @@ def search(object_name: str, limit: int):
         Search(using=connections.get_connection(), index='ksr')
             .query(Q({"match": {
                 "name": {
-                    "value": object_name,
+                    "query": object_name,
                     "boost": 3.0,
                     "fuzziness": 'AUTO',
                 }

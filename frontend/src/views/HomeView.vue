@@ -55,16 +55,20 @@
                   axios.post("/api/actualize", formData, { headers: { 'Content-Type': 'multipart/form-data' }})
             .then(resp => {
               // this.showPopup("failed", "ВНИМАНИЕ", "Файл обрабатывается, пожалуйста, подождите")
+              alert("ВНИМАНИЕ: Файл обрабатывается, пожалуйста, подождите");
               setTimeout(function checker (callback) {
                 axios.get("/api/actualize").then(function (response) {
                   if (response.data.status == "running") {
                     setTimeout(checker, 1000, callback);
                   }
                   if (response.data.status == "completed") {
-                    callback("completed", "УСПЕХ", "Данные актуализированы");
+                    //callback("completed", "УСПЕХ", "Данные актуализированы");
+                    alert("УСПЕХ: Данные актуализированы");
+                    
                   }
                   if (response.data.status == "failed") {
-                    callback("failed", "ОШИБКА", "Актуализация данных не была проведена");
+                    //callback("failed", "ОШИБКА", "Актуализация данных не была проведена");
+                    alert("ОШИБКА: Актуализация данных не была произведена");
                   }
                 });
               }, 1000, this.showPopup);
@@ -74,11 +78,14 @@
             .catch(error => {
               console.log(error.response.status);
               if (error.response.status == 400) {
-                this.showPopup("failed", "ОШИБКА", "Неправильный формат файла");
+                //this.showPopup("failed", "ОШИБКА", "Неправильный формат файла");
+                  alert("ОШИБКА: Неправильный формат файла");
               } else if (error.response.status == 423) {
-                this.showPopup("failed", "ОШИБКА", "Файл ещё в обработке");
+                //this.showPopup("failed", "ОШИБКА", "Файл ещё в обработке");
+                  alert("ОШИБКА: Файл ещё в обработке");
               } else if (error.response.status == 403) {
-                this.showPopup("failed", "ОШИБКА", "Неправильный пароль");
+                //this.showPopup("failed", "ОШИБКА", "Неправильный пароль");
+                  alert("ОШИБКА: Неправильный пароль");
               }
               reject(error)
             });

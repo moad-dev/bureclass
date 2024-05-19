@@ -2,7 +2,7 @@
     <form v-on:submit.prevent="searchBRC">
         <div style="display: grid;">
             <div class="input-container">
-                <label for="inputString">Введите название строительного материала</label>
+                <label for="inputString">Введите название строительного ресурса</label>
                 <input id="inputString" class="big-input" v-model="object_name" required />
             </div>
             

@@ -9,12 +9,12 @@ from fastapi import (
 from fastapi.responses import (
     JSONResponse
 )
-from elasticsearch_dsl import Search, connections
+from elasticsearch_dsl import Search, connections, Q
 
 from typing import Annotated
 
 from . import schemas
-from .embedding_model import embeddings_model, Q
+from .embedding_model import embeddings_model
 
 connections.create_connection(hosts=f"http://search:9200", basic_auth=('elastic', os.getenv('ELASTIC_PASSWORD')))
 

@@ -64,7 +64,8 @@ updated_rows = new_snapshot.join(old_snapshot, on='code').filter(
     (pl.col('unit') != pl.col('unit'))
 )
 
-embeddings = pl.scan_parquet('data/embeddings_cache.parquet')
+# TODO: embeddings from xlsx!!!
+embeddings = pl.scan_parquet('data/ksr_embeddings.parquet')
 
 new_rows = new_rows.join(
     embeddings.select('name', 'embedding'), 
@@ -106,7 +107,8 @@ connections.create_connection(hosts=f"http://bureclass-search:9200", basic_auth=
 
 for success, info in parallel_bulk(
     connections.get_connection(),
-    chain.from_iterable(map(lambda x: x.to_dicts(), bulk_actions))
+    chain.from_iterable(map(lambda x: x.to_dicts(), bulk_actions)),
+    request_timeout=60*5,
 ):
     if not success:
         print('A document failed:', info)

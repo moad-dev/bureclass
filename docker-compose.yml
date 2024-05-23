@@ -9,11 +9,16 @@ services:
       dockerfile: docker/Dockerfile-backend
     env_file:
       - .env
-    command: "uvicorn backend.main:app --host 0.0.0.0 --port 80"
+    command: "uvicorn main:app --host 0.0.0.0 --port 80"
     networks:
       - bureclass-conn
-    volumes:
-      - backend-data:/app/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
   frontend:
     image: bureclass-frontend
@@ -61,7 +66,6 @@ services:
 
 volumes:
   search-data:
-  backend-data:
 
 networks:
   bureclass-conn:

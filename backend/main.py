@@ -13,8 +13,8 @@ from elasticsearch_dsl import Search, connections
 
 from typing import Annotated
 
-from . import schemas
-from .embedding_model import embeddings_model
+import schemas
+from embedding_model import embeddings_model
 
 connections.create_connection(hosts=f"http://search:9200", basic_auth=('elastic', os.getenv('ELASTIC_PASSWORD')))
 
@@ -85,7 +85,7 @@ async def actualize(password: Annotated[str, Form()], file: UploadFile):
 
     async with actualization_lock:
         asyncio.create_task(run_subprocess(
-            ['python', 'backend/actualize_job.py'],
+            ['python', 'actualize_job.py'],
             on_job_complete
         ))
 

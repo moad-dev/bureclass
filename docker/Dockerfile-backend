@@ -2,7 +2,7 @@ FROM python:3.12.0-bookworm
 
 WORKDIR /app
 
-COPY backend/requirements.txt .
+COPY ./backend/requirements.txt .
 
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
@@ -10,6 +10,6 @@ RUN pip3 install -r requirements.txt
 COPY ./backend/save_models.py .
 RUN python save_models.py
 
-COPY backend ./backend
+COPY backend .
 
-CMD uvicorn backend.main:app --host 0.0.0.0 --port 80
+CMD uvicorn main:app --host 0.0.0.0 --port 80
